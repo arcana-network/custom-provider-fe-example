@@ -30,15 +30,27 @@ h2 {
   height: 100vh;
 }
 
+.header {
+  background-color: black;
+  color: white;
+  padding: 15px 0;
+  font-size: 20px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
 .container {
+  min-width: 400px;
   border: 2px solid black;
+}
+
+.content {
   padding: 40px 40px;
 }
 
-.login-container {
+/* .login-container {
   margin-top: 20px;
-}
+} */
 
-.login-container > div {
+.login-container > div:not(:first-child) {
   margin-top: 10px;
 }

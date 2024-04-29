@@ -1,12 +1,17 @@
 import { AuthProvider } from "@arcana/auth";
 
-let auth: AuthProvider | null = null;
-
-const getAuth = async () => {
-  if (!auth) {
-    auth = new AuthProvider("xar_dev_ecc6292e414c8228ae69ce5ff6a1b3eca59984e9");
+const auth: AuthProvider = new AuthProvider(
+  "ecc6292e414c8228ae69ce5ff6a1b3eca59984e9",
+  {
+    network: {
+      authUrl: "https://auth-verify-phi.vercel.app",
+      gatewayUrl: "https://gateway-dev.arcana.network",
+      walletUrl: "https://wallet-dev-test.arcana.network",
+    },
   }
-  await auth.init();
+);
+
+const getAuth = () => {
   return auth;
 };
 
