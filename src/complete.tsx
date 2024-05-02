@@ -1,7 +1,7 @@
-import { useSearchParams } from "react-router-dom";
-import { getAuth } from "./auth";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import React from "react";
 import Button from "./Button";
+import { useAuth } from "./useAuth";
 
 const STATUS = {
   INPROGRESS: "ip",
@@ -28,10 +28,11 @@ const getToken = async (params: { code: string; state: string }) => {
 };
 
 const Complete = () => {
+  const { auth } = useAuth();
   const [progressText, setProgressText] = React.useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const [status, setStatus] = React.useState(STATUS.INPROGRESS);
-  const [loginType, setLoginType] = React.useState("");
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     const code = searchParams.get("code");
@@ -42,15 +43,17 @@ const Complete = () => {
         .then(function (params) {
           setProgressText("Arcana: Logging In");
           if (params.linkComplete == true) {
-            getAuth().then(() => {
-              setProgressText(`Account linked to ${params.linkedAccount}`);
+            auth.init().then(() => {
+              setProgressText(
+                `You just linked your account to ${params.linkedAccount}`
+              );
               console.log("Link complete!");
+              setStatus(STATUS.COMPLETE);
             });
             return;
           }
           localStorage.setItem("token", params.loginToken);
-          setLoginType(params.loginType);
-          getAuth().then(async (auth) => {
+          auth.init().then(async () => {
             auth.provider.once("connect", () => {
               setProgressText("Login complete");
               setStatus(STATUS.COMPLETE);
@@ -73,61 +76,20 @@ const Complete = () => {
   return (
     <div className="main">
       <div className="container">
-        <div>
-          <h2>REDIRECT PAGE</h2>
-          <hr />
+        <div className="header">
+          <p>REDIRECT</p>
         </div>
-        <p>{progressText}</p>
-        <LinkAccount status={status} currentLogin={loginType} />
+        <div className="content">
+          <p>{progressText}</p>
+          {status == STATUS.COMPLETE ? (
+            <Button onClick={() => navigate("/profile")}>Go to profile</Button>
+          ) : (
+            ""
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-const LinkAccount = ({
-  currentLogin,
-  status,
-}: {
-  currentLogin: string;
-  status: string;
-}) => {
-  console.log({ status });
-  if (status !== STATUS.COMPLETE) {
-    console.log("???");
-    return "";
-  }
-
-  const token = localStorage.getItem("token");
-  if (!token) {
-    console.log("????");
-    return;
-  }
-
-  return (
-    <div>
-      {["epic", "google", "twitch"].map((l) => {
-        console.log({ currentLogin });
-        if (l == currentLogin) {
-          return "";
-        }
-        return (
-          <Button
-            key={l}
-            onClick={() => {
-              redirectToLink(l, token);
-            }}
-          >
-            {`Link with ${l}`}
-          </Button>
-        );
-      })}
-    </div>
-  );
-};
-
-const redirectToLink = (loginType: string, token: string) => {
-  window.location.href = `${
-    import.meta.env.VITE_SERVER_URL
-  }/link/${loginType}?token=${token}`;
-};
 export default Complete;
