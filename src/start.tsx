@@ -25,7 +25,7 @@ const Start = () => {
         </div>
         <div className="content">
           {loading ? (
-            "loading..."
+            "Loading..."
           ) : (
             <div className="login-container">
               <div>
@@ -53,6 +53,15 @@ const Start = () => {
                   }}
                 >
                   Login with twitch
+                </Button>
+              </div>
+              <div>
+                <Button
+                  onClick={() => {
+                    redirectToLogin("steam");
+                  }}
+                >
+                  Login with steam
                 </Button>
               </div>
             </div>

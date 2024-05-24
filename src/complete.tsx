@@ -38,10 +38,12 @@ const Complete = () => {
     const code = searchParams.get("code");
     const state = searchParams.get("state");
     if (code && state) {
-      setProgressText("Getting token");
+      setProgressText("Getting token...");
       getToken({ code, state })
         .then(function (params) {
-          setProgressText("Arcana: Logging In");
+          setProgressText(
+            params.linkComplete ? " Linking account..." : "Logging In..."
+          );
           if (params.linkComplete == true) {
             auth.init().then(() => {
               setProgressText(
@@ -61,7 +63,7 @@ const Complete = () => {
             await auth.loginWithCustomProvider({
               token: params.token,
               userID: params.userID,
-              provider: "csp-aAPozkerUragPuza",
+              provider: import.meta.env.VITE_ARCANA_CSP,
             });
           });
         })

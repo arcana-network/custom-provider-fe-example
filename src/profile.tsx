@@ -21,7 +21,7 @@ const Profile = () => {
 
 const ProfileView = () => {
   const navigate = useNavigate();
-  const { loggedIn } = useAuth();
+  const { auth, loggedIn } = useAuth();
   const token = localStorage.getItem("token");
   const [loading, setLoading] = React.useState(true);
   const [linkedAccounts, setLinkedAccounts] = React.useState<string[]>([]);
@@ -68,7 +68,8 @@ const ProfileView = () => {
                 })}
               </div>
               <LinkAccount token={token!} linkedAccounts={linkedAccounts} />
-              {/* <Button onClick={() => auth.logout()}>Logout</Button> */}
+              <br />
+              <Button onClick={() => auth.logout()}>LOGOUT</Button>
             </>
           )}
         </div>
